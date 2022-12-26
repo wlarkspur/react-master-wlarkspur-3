@@ -28,7 +28,6 @@ function DraggableCard({ toDoId, toDoText, index }: IDraggableCardProps) {
           {...magic.draggableProps}
           {...magic.dragHandleProps}
         >
-          <span>🔥</span>
           {toDoText}
         </Card>
       )}

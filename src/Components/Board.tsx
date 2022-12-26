@@ -6,10 +6,16 @@ import { useForm } from "react-hook-form";
 import { ITodo, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
 
+const Garbage = styled.div`
+  width: 600px;
+  min-height: 100px;
+  background-color: black;
+  display: flex;
+`;
+
 const Wrapper = styled.div`
   width: 300px;
   background-color: ${(props) => props.theme.boardColor};
-
   padding-top: 10px;
   border-radius: 5px;
   min-height: 300px;
@@ -29,7 +35,7 @@ interface IAreaProps {
   isDraggingOver: boolean;
 }
 
-const Aria = styled.div<IAreaProps>`
+const Area = styled.div<IAreaProps>`
   background-color: ${(props) =>
     props.isDraggingOver
       ? "#dfe6e9"
@@ -87,7 +93,7 @@ function Board({ toDos, boardId }: IBoardProps) {
       </Form>
       <Droppable droppableId={boardId}>
         {(magic, info) => (
-          <Aria
+          <Area
             isDraggingOver={info.isDraggingOver}
             isDraggingFromThis={Boolean(info.draggingFromThisWith)}
             ref={magic.innerRef}
@@ -102,7 +108,7 @@ function Board({ toDos, boardId }: IBoardProps) {
               />
             ))}
             {magic.placeholder}
-          </Aria>
+          </Area>
         )}
       </Droppable>
     </Wrapper>
