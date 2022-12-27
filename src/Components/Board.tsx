@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import { Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./DraggableCard";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ITodo, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
+import { setLocalStorage } from "../util/localstorage";
 
 const Garbage = styled.div`
   width: 600px;
@@ -73,6 +74,7 @@ function Board({ toDos, boardId }: IBoardProps) {
     };
 
     setToDos((allBoards) => {
+      console.log(allBoards);
       return {
         ...allBoards,
         [boardId]: [...allBoards[boardId], newToDo],
@@ -81,6 +83,9 @@ function Board({ toDos, boardId }: IBoardProps) {
 
     setValue("toDo", "");
   };
+  useEffect(() => {
+    setLocalStorage(toDoState);
+  }, [toDoState]);
   return (
     <Wrapper>
       <Title>{boardId}</Title>
