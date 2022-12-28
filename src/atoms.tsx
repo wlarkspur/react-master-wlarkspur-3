@@ -12,7 +12,7 @@ export interface IToDoState {
 
 export const toDoState = atom<IToDoState>({
   key: "toDo",
-  default: getLocalStorage() ?? {
+  default: getLocalStorage("") ?? {
     "To Do": [],
     Doing: [],
     Done: [],

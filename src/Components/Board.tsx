@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./DraggableCard";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ITodo, toDoState } from "../atoms";
+import { ITodo, IToDoState, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
 import { setLocalStorage } from "../util/localstorage";
 
@@ -84,8 +84,9 @@ function Board({ toDos, boardId }: IBoardProps) {
     setValue("toDo", "");
   };
   useEffect(() => {
-    setLocalStorage(toDoState);
-  }, [toDoState]);
+    setLocalStorage({ toDos });
+  }, [{ ...setToDos }]);
+
   return (
     <Wrapper>
       <Title>{boardId}</Title>
