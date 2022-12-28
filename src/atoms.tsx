@@ -9,10 +9,15 @@ export interface ITodo {
 export interface IToDoState {
   [key: string]: ITodo[];
 }
+export interface ILocalStorage {
+  "To Do": [];
+  Doing: [];
+  Done: [];
+}
 
 export const toDoState = atom<IToDoState>({
-  key: "toDo",
-  default: getLocalStorage("") ?? {
+  key: "toDos",
+  default: getLocalStorage() ?? {
     "To Do": [],
     Doing: [],
     Done: [],

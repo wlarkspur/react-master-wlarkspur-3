@@ -85,7 +85,7 @@ function Board({ toDos, boardId }: IBoardProps) {
   };
   useEffect(() => {
     setLocalStorage({ toDos });
-  }, [{ ...setToDos }]);
+  }, [{ toDos }]);
 
   return (
     <Wrapper>
