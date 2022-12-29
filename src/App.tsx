@@ -1,11 +1,14 @@
 import styled from "styled-components";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { toDoState } from "./atoms";
-import { useRecoilState } from "recoil";
+import { DeleteAreaState, toDoState } from "./atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Board from "./Components/Board";
+import Garbage from "./Components/DeleteBoard";
 
 const Wrapper = styled.div`
+  box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   width: 100vw;
   margin: 0 auto;
   justify-content: center;
@@ -24,7 +27,7 @@ const Boards = styled.div`
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const onDragEnd = (info: DropResult) => {
-    const { destination, draggableId, source } = info;
+    const { destination, source } = info;
     console.log(info);
     if (!destination) return;
     if (destination?.droppableId === source.droppableId) {
@@ -40,7 +43,10 @@ function App() {
         };
       });
     }
-    if (destination.droppableId !== source.droppableId) {
+    if (
+      destination.droppableId !== source.droppableId &&
+      destination.droppableId !== "garbagecan"
+    ) {
       // cross board movement
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
@@ -55,10 +61,22 @@ function App() {
         };
       });
     }
+    if (destination.droppableId === "garbagecan") {
+      setToDos((allBoards) => {
+        console.log(allBoards);
+        const boardCopy = [...allBoards[source.droppableId]];
+        boardCopy.splice(source.index, 1);
+        return {
+          ...allBoards,
+          [source.droppableId]: boardCopy,
+        };
+      });
+    }
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
+        <Garbage />
         <Boards>
           {Object.keys(toDos).map((boardId) => (
             <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
