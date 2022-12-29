@@ -5,7 +5,7 @@ export const setLocalStorage = (toDos: IToDoState) => {
 };
 
 export const getLocalStorage = () => {
-  const localToDos = localStorage.getItem("...toDos");
+  const localToDos = localStorage.getItem("toDos");
   if (localToDos) {
     return JSON.parse(localToDos);
   }

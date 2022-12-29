@@ -74,7 +74,6 @@ function Board({ toDos, boardId }: IBoardProps) {
     };
 
     setToDos((allBoards) => {
-      console.log(allBoards);
       return {
         ...allBoards,
         [boardId]: [...allBoards[boardId], newToDo],
@@ -83,9 +82,6 @@ function Board({ toDos, boardId }: IBoardProps) {
 
     setValue("toDo", "");
   };
-  useEffect(() => {
-    setLocalStorage({ toDos });
-  }, [{ toDos }]);
 
   return (
     <Wrapper>
