@@ -1,6 +1,11 @@
 import styled from "styled-components";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { DeleteAreaState, toDoState } from "./atoms";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { IPanelState, panelState, toDoState } from "./atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Board from "./Components/Board";
 import Garbage from "./Components/DeleteBoard";
@@ -16,12 +21,28 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
+const BtnWrapper = styled.div`
+  display: flex;
+`;
+
 const Boards = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
   align-items: flex-start;
   gap: 10px;
+`;
+
+const StyleBtn = styled.button`
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  background-color: yellowgreen;
+  border-radius: 15px;
+  margin-left: 5px;
+  justify-content: center;
+  font-weight: 700;
 `;
 
 function App() {
@@ -73,10 +94,14 @@ function App() {
       });
     }
   };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
-        <Garbage />
+        <BtnWrapper>
+          <Garbage />
+          <StyleBtn>ADD</StyleBtn>
+        </BtnWrapper>
         <Boards>
           {Object.keys(toDos).map((boardId) => (
             <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />

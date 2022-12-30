@@ -3,16 +3,9 @@ import { Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./DraggableCard";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ITodo, IToDoState, toDoState } from "../atoms";
-import { useSetRecoilState } from "recoil";
+import { IPanel, ITodo, IToDoState, panelState, toDoState } from "../atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { setLocalStorage } from "../util/localstorage";
-
-const Garbage = styled.div`
-  width: 600px;
-  min-height: 100px;
-  background-color: black;
-  display: flex;
-`;
 
 const Wrapper = styled.div`
   width: 300px;
@@ -30,6 +23,8 @@ const Title = styled.h2`
   margin-bottom: 10px;
   font-size: 18px;
 `;
+
+const Modify = styled.button``;
 
 interface IAreaProps {
   isDraggingFromThis: boolean;
