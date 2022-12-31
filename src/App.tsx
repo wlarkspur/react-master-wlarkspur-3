@@ -5,12 +5,13 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import { IPanelState, panelState, toDoState } from "./atoms";
+import { IPanelState, ITodo, PanelState, toDoState } from "./atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Board from "./Components/Board";
 import Garbage from "./Components/DeleteBoard";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import BackPanel from "./Components/BackPanel";
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -47,12 +48,42 @@ const StyleBtn = styled.button`
   font-weight: 700;
 `;
 
-interface AddCategoryForm {
-  category: string;
+const AddForm = styled.div`
+  margin-bottom: 10px;
+  display: flex;
+  width: 920px;
+  justify-content: flex-start;
+  align-items: center;
+`;
+interface IProps {
+  panelsId: string;
+  index: number;
 }
-
+interface IForm {
+  addToDo: string;
+}
+/* const { register, setValue, handleSubmit } = useForm<IForm>();
+  const onValid = ({ toDo }: IForm) => {
+    const newToDo = {
+      id: Date.now(),
+      text: toDo,
+    }; */
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const [panels, SetPanels] = useRecoilState(PanelState);
+  const { register, setValue, handleSubmit } = useForm<IForm>();
+  const onValid = ({ addToDo }: IForm) => {
+    const newToDo = {
+      id: Date.now(),
+      text: addToDo,
+    };
+    setToDos((allBoards) => {
+      return {
+        ...allBoards,
+        [addToDo]: [],
+      };
+    });
+  };
   const onDragEnd = (info: DropResult) => {
     const { destination, source } = info;
     console.log(info);
@@ -99,23 +130,57 @@ function App() {
         };
       });
     }
+    if (source.droppableId === "Boards") {
+      setToDos((allBoards) => {
+        const boardList = Object.keys(allBoards);
+        const taskObj = boardList[source.index];
+        boardList.splice(source.index, 1);
+        boardList.splice(destination.index, 0, taskObj);
+        /* console.log({ ...allBoards }); */
+        let boards = {};
+        boardList.map((board) => {
+          boards = { ...boards, [board]: allBoards[board] };
+        });
+        return {
+          ...boards,
+        };
+      });
+    }
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
-        <form>
-          <input type="text" />
-        </form>
+        <AddForm>
+          <form onSubmit={handleSubmit(onValid)}>
+            <input
+              type="text"
+              {...register("addToDo", {
+                required: true,
+              })}
+              placeholder={`New Board add here`}
+            />
+          </form>
+        </AddForm>
         <BtnWrapper>
           <Garbage />
           <StyleBtn>ADD</StyleBtn>
         </BtnWrapper>
-        <Boards>
-          {Object.keys(toDos).map((boardId) => (
-            <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
-          ))}
-        </Boards>
+        <Droppable droppableId="Boards" direction="horizontal" type="BOARD">
+          {(provided, snapshot) => (
+            <Boards ref={provided.innerRef} {...provided.droppableProps}>
+              {Object.keys(toDos).map((boardId, index) => (
+                <Board
+                  boardId={boardId}
+                  key={boardId}
+                  toDos={toDos[boardId]}
+                  index={index}
+                />
+              ))}
+              {provided.placeholder}
+            </Boards>
+          )}
+        </Droppable>
       </Wrapper>
     </DragDropContext>
   );

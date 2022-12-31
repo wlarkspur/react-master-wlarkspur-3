@@ -20,7 +20,7 @@ interface IDraggableCardProps {
 
 function DraggableCard({ toDoId, toDoText, index }: IDraggableCardProps) {
   return (
-    <Draggable key={toDoId} draggableId={toDoId + ""} index={index}>
+    <Draggable /* key={toDoId} */ draggableId={toDoId + ""} index={index}>
       {(magic, snapshot) => (
         <Card
           isDragging={snapshot.isDragging}

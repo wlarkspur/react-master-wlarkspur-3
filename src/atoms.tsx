@@ -6,7 +6,6 @@ const { persistAtom } = recoilPersist();
 export interface ITodo {
   id: number;
   text: string;
-  category?: number;
 }
 
 export interface IToDoState {
@@ -27,9 +26,10 @@ export interface ILocalStorage {
   Done: [];
 }
 
-export const panelState = atom<string[]>({
+export const PanelState = atom<string[]>({
   key: "categories",
   default: ["To Do", "Doing", "Done"],
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const toDoState = atom<IToDoState>({
