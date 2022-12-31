@@ -5,13 +5,11 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import { IPanelState, ITodo, PanelState, toDoState } from "./atoms";
+import { IPanelState, ITodo, toDoState } from "./atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Board from "./Components/Board";
 import Garbage from "./Components/DeleteBoard";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import BackPanel from "./Components/BackPanel";
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -70,8 +68,7 @@ interface IForm {
     }; */
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const [panels, SetPanels] = useRecoilState(PanelState);
-  const { register, setValue, handleSubmit } = useForm<IForm>();
+  const { register, handleSubmit } = useForm<IForm>();
   const onValid = ({ addToDo }: IForm) => {
     const newToDo = {
       id: Date.now(),
@@ -85,12 +82,14 @@ function App() {
     });
   };
   const onDragEnd = (info: DropResult) => {
-    const { destination, source } = info;
+    const { destination, source, type } = info;
     console.log(info);
     if (!destination) return;
-    if (destination?.droppableId === source.droppableId) {
+    if (type === "CARD" && destination?.droppableId === source.droppableId) {
       //same board movement
       setToDos((allBoards) => {
+        console.log({ ...allBoards });
+        console.log(type);
         const boardCopy = [...allBoards[source.droppableId]];
         const taskObj = boardCopy[source.index];
         boardCopy.splice(source.index, 1);
@@ -101,15 +100,14 @@ function App() {
         };
       });
     }
-    if (
-      destination.droppableId !== source.droppableId &&
-      destination.droppableId !== "garbagecan"
-    ) {
+    if (type === "CARD" && destination.droppableId !== source.droppableId) {
       // cross board movement
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
         const taskObj = sourceBoard[source.index];
+        console.log(taskObj);
         const destinationBoard = [...allBoards[destination.droppableId]];
+
         sourceBoard.splice(source.index, 1);
         destinationBoard.splice(destination.index, 0, taskObj);
         return {
@@ -119,9 +117,9 @@ function App() {
         };
       });
     }
-    if (destination.droppableId === "garbagecan") {
+    if (destination.droppableId === "Remove") {
       setToDos((allBoards) => {
-        console.log(allBoards);
+        //console.log(allBoards);
         const boardCopy = [...allBoards[source.droppableId]];
         boardCopy.splice(source.index, 1);
         return {
@@ -133,10 +131,11 @@ function App() {
     if (source.droppableId === "Boards") {
       setToDos((allBoards) => {
         const boardList = Object.keys(allBoards);
+        console.log(boardList);
         const taskObj = boardList[source.index];
         boardList.splice(source.index, 1);
-        boardList.splice(destination.index, 0, taskObj);
-        /* console.log({ ...allBoards }); */
+        boardList.splice(destination?.index, 0, taskObj);
+        console.log(boardList, allBoards);
         let boards = {};
         boardList.map((board) => {
           boards = { ...boards, [board]: allBoards[board] };
@@ -155,6 +154,7 @@ function App() {
           <form onSubmit={handleSubmit(onValid)}>
             <input
               type="text"
+              pattern="[a-z0-9]+"
               {...register("addToDo", {
                 required: true,
               })}
@@ -163,8 +163,8 @@ function App() {
           </form>
         </AddForm>
         <BtnWrapper>
-          <Garbage />
-          <StyleBtn>ADD</StyleBtn>
+          <Garbage boardId={"Remove"} />
+          {/* <StyleBtn>ADD</StyleBtn> */}
         </BtnWrapper>
         <Droppable droppableId="Boards" direction="horizontal" type="BOARD">
           {(provided, snapshot) => (

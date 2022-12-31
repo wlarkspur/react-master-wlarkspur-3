@@ -23,8 +23,8 @@ const Title = styled.h2`
 `;
 
 interface IAreaProps {
-  isDraggingFromThis: boolean;
   isDraggingOver: boolean;
+  isDraggingFromThis: boolean;
 }
 
 const Area = styled.div<IAreaProps>`
@@ -82,7 +82,7 @@ function Board({ toDos, boardId, index }: IBoardProps) {
     <Draggable draggableId={boardId} index={index}>
       {(provided, snapshot) => (
         <Wrapper
-          key={index}
+          key={index} // index -> boardId
           ref={provided.innerRef}
           isDragging={snapshot.isDragging}
           {...provided.draggableProps}
@@ -108,7 +108,7 @@ function Board({ toDos, boardId, index }: IBoardProps) {
                 ref={magic.innerRef}
                 {...magic.droppableProps}
               >
-                {toDos.map((toDo, index) => (
+                {toDos?.map((toDo, index) => (
                   <DraggableCard
                     key={toDo.id}
                     index={index}

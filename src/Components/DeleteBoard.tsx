@@ -1,9 +1,19 @@
 import { Droppable } from "react-beautiful-dnd";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { DeleteAreaState } from "../atoms";
+import { ITodo } from "../atoms";
 
-const Wrapper = styled.div`
+interface IAreaProps {
+  isDraggingOver: boolean;
+  isDraggingFromThis: boolean;
+}
+interface IBoardProps {
+  toDos?: ITodo[];
+  boardId: string;
+}
+const Wrapper = styled.div``;
+
+const Area = styled.div<IAreaProps>`
   display: flex;
   margin: 0 0 10px 0;
   width: 835px;
@@ -18,19 +28,24 @@ const Wrapper = styled.div`
   }
 `;
 
-const Garbage = () => {
-  const garbagecan = useRecoilValue(DeleteAreaState);
+function Garbage({ toDos, boardId }: IBoardProps) {
   return (
-    <Droppable droppableId="garbagecan">
-      {(provided) => (
-        <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
-          {garbagecan && <span>delete</span>}
-          {provided.placeholder}
-          <span>Drag items here to delete</span>
-        </Wrapper>
-      )}
-    </Droppable>
+    <Wrapper>
+      <Droppable droppableId={boardId} type="CARD">
+        {(provided, snapshot) => (
+          <Area
+            isDraggingOver={snapshot.isDraggingOver}
+            isDraggingFromThis={Boolean(snapshot.draggingFromThisWith)}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {provided.placeholder}
+            <span>Drag items here to delete</span>
+          </Area>
+        )}
+      </Droppable>
+    </Wrapper>
   );
-};
+}
 
 export default Garbage;
