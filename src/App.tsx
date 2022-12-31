@@ -9,6 +9,8 @@ import { IPanelState, panelState, toDoState } from "./atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Board from "./Components/Board";
 import Garbage from "./Components/DeleteBoard";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -44,6 +46,10 @@ const StyleBtn = styled.button`
   justify-content: center;
   font-weight: 700;
 `;
+
+interface AddCategoryForm {
+  category: string;
+}
 
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
@@ -98,6 +104,9 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
+        <form>
+          <input type="text" />
+        </form>
         <BtnWrapper>
           <Garbage />
           <StyleBtn>ADD</StyleBtn>
