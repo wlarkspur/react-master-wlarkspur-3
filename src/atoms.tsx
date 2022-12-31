@@ -6,20 +6,35 @@ const { persistAtom } = recoilPersist();
 export interface ITodo {
   id: number;
   text: string;
+  category?: number;
 }
 
 export interface IToDoState {
   [key: string]: ITodo[];
 }
+export interface IPanel {
+  id: number;
+  text: string;
+}
+
+export interface IPanelState {
+  [key: string]: IPanel[];
+}
+
 export interface ILocalStorage {
   "To Do": [];
   Doing: [];
   Done: [];
 }
 
+export const panelState = atom<string[]>({
+  key: "categories",
+  default: ["To Do", "Doing", "Done"],
+});
+
 export const toDoState = atom<IToDoState>({
   key: "toDos",
-  default: /* getLocalStorage() ?? */ {
+  default: {
     "To Do": [],
     Doing: [],
     Done: [],

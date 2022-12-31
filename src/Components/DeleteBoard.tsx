@@ -6,7 +6,7 @@ import { DeleteAreaState } from "../atoms";
 const Wrapper = styled.div`
   display: flex;
   margin: 0 0 10px 0;
-  width: 920px;
+  width: 835px;
   height: 80px;
   background-color: #333030;
   border-radius: 15px;
