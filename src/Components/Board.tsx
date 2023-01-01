@@ -40,9 +40,11 @@ const Area = styled.div<IAreaProps>`
 `;
 
 const Form = styled.form`
+  display: flex;
+  justify-content: center;
   width: 100%;
   input {
-    width: 100%;
+    width: 95%;
   }
 `;
 const Header = styled.div<{ isDragging: boolean }>`
@@ -61,7 +63,9 @@ interface IForm {
 
 function Board({ toDos, boardId, index }: IBoardProps) {
   const setToDos = useSetRecoilState(toDoState);
-  const { register, setValue, handleSubmit } = useForm<IForm>();
+  const { register, setValue, handleSubmit } = useForm<IForm>({
+    /* mode: "onBlur", */
+  });
   const onValid = ({ toDo }: IForm) => {
     const newToDo = {
       id: Date.now(),

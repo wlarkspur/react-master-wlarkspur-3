@@ -16,23 +16,22 @@ const Wrapper = styled.div``;
 const Area = styled.div<IAreaProps>`
   display: flex;
   margin: 0 0 10px 0;
-  width: 500px;
-  height: 100px;
-  background-color: white;
+  width: 835px;
+  height: 80px;
+  background-color: #333030;
   border-radius: 15px;
   justify-content: center;
   align-items: center;
   span {
-    color: red;
+    color: white;
     position: fixed;
-    font-weight: 700;
   }
 `;
 
-function DeleteBoard({ toDos, boardId }: IBoardProps) {
+function Garbage({ toDos, boardId }: IBoardProps) {
   return (
     <Wrapper>
-      <Droppable droppableId={boardId} type="BOARD">
+      <Droppable droppableId={boardId} type="CARD">
         {(provided, snapshot) => (
           <Area
             isDraggingOver={snapshot.isDraggingOver}
@@ -41,7 +40,7 @@ function DeleteBoard({ toDos, boardId }: IBoardProps) {
             {...provided.droppableProps}
           >
             {provided.placeholder}
-            <span>DELETE BOARD</span>
+            <span>Drag items here to delete</span>
           </Area>
         )}
       </Droppable>
@@ -49,4 +48,4 @@ function DeleteBoard({ toDos, boardId }: IBoardProps) {
   );
 }
 
-export default DeleteBoard;
+export default Garbage;

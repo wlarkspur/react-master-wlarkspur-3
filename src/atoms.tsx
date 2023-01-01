@@ -26,11 +26,9 @@ export interface ILocalStorage {
   Done: [];
 }
 
-/* export const PanelState = atom<string[]>({
-  key: "categories",
-  default: ["To Do", "Doing", "Done"],
-  effects_UNSTABLE: [persistAtom],
-}); */
+export interface IInput {
+  text: string;
+}
 
 export const toDoState = atom<IToDoState>({
   key: "toDos",

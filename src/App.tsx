@@ -3,13 +3,18 @@ import {
   DragDropContext,
   Draggable,
   Droppable,
+  DroppableProvided,
+  DroppableStateSnapshot,
   DropResult,
 } from "react-beautiful-dnd";
-import { IPanelState, ITodo, toDoState } from "./atoms";
+import { IInput, toDoState } from "./atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Board from "./Components/Board";
-import Garbage from "./Components/DeleteBoard";
-import { useForm } from "react-hook-form";
+import Garbage from "./Components/DeleteCard";
+import DeleteBoard from "./Components/DeleteBoard";
+import { useForm, useFormState } from "react-hook-form";
+import { text } from "stream/consumers";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -22,28 +27,12 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
-const BtnWrapper = styled.div`
-  display: flex;
-`;
-
 const Boards = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
   align-items: flex-start;
   gap: 10px;
-`;
-
-const StyleBtn = styled.button`
-  display: flex;
-  align-items: center;
-  width: 80px;
-  height: 80px;
-  background-color: yellowgreen;
-  border-radius: 15px;
-  margin-left: 5px;
-  justify-content: center;
-  font-weight: 700;
 `;
 
 const AddForm = styled.div`
@@ -53,13 +42,13 @@ const AddForm = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
-interface IProps {
-  panelsId: string;
-  index: number;
+interface IEvent {
+  event: string;
 }
 interface IForm {
   addToDo: string;
 }
+
 /* const { register, setValue, handleSubmit } = useForm<IForm>();
   const onValid = ({ toDo }: IForm) => {
     const newToDo = {
@@ -68,18 +57,15 @@ interface IForm {
     }; */
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const { register, handleSubmit } = useForm<IForm>();
+  const { register, handleSubmit, setValue } = useForm<IForm>();
   const onValid = ({ addToDo }: IForm) => {
-    const newToDo = {
-      id: Date.now(),
-      text: addToDo,
-    };
     setToDos((allBoards) => {
       return {
         ...allBoards,
         [addToDo]: [],
       };
     });
+    setValue("addToDo", "");
   };
   const onDragEnd = (info: DropResult) => {
     const { destination, source, type } = info;
@@ -100,12 +86,16 @@ function App() {
         };
       });
     }
-    if (type === "CARD" && destination.droppableId !== source.droppableId) {
+    if (
+      destination.droppableId !== "Remove" &&
+      type === "CARD" &&
+      destination.droppableId !== source.droppableId
+    ) {
       // cross board movement
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
         const taskObj = sourceBoard[source.index];
-        console.log(taskObj);
+        console.log({ ...allBoards[destination.droppableId] });
         const destinationBoard = [...allBoards[destination.droppableId]];
 
         sourceBoard.splice(source.index, 1);
@@ -128,14 +118,27 @@ function App() {
         };
       });
     }
-    if (source.droppableId === "Boards") {
+    if (source.droppableId && destination.droppableId === "Boards") {
       setToDos((allBoards) => {
         const boardList = Object.keys(allBoards);
-        console.log(boardList);
         const taskObj = boardList[source.index];
         boardList.splice(source.index, 1);
         boardList.splice(destination?.index, 0, taskObj);
-        console.log(boardList, allBoards);
+        let boards = {};
+        boardList.map((board) => {
+          boards = { ...boards, [board]: allBoards[board] };
+        });
+        return {
+          ...boards,
+        };
+      });
+    }
+    if (destination.droppableId === "DeleteBoard") {
+      setToDos((allBoards) => {
+        const boardList = Object.keys(allBoards);
+        const taskObj = boardList[source.index];
+        boardList.splice(source.index, 1);
+        console.log(boardList);
         let boards = {};
         boardList.map((board) => {
           boards = { ...boards, [board]: allBoards[board] };
@@ -154,20 +157,28 @@ function App() {
           <form onSubmit={handleSubmit(onValid)}>
             <input
               type="text"
-              pattern="[a-z0-9]+"
               {...register("addToDo", {
                 required: true,
               })}
               placeholder={`New Board add here`}
             />
+            <button>ADD</button>
           </form>
         </AddForm>
-        <BtnWrapper>
-          <Garbage boardId={"Remove"} />
-          {/* <StyleBtn>ADD</StyleBtn> */}
-        </BtnWrapper>
+        <DeleteBoard boardId={"DeleteBoard"} />
+        <Garbage boardId={"Remove"} />
+        {/* <StyleBtn>ADD</StyleBtn> */}
+
         <Droppable droppableId="Boards" direction="horizontal" type="BOARD">
-          {(provided, snapshot) => (
+          {(
+            provided: DroppableProvided,
+            {
+              isDraggingOver,
+              draggingOverWith,
+              draggingFromThisWith,
+              isUsingPlaceholder,
+            }: DroppableStateSnapshot
+          ) => (
             <Boards ref={provided.innerRef} {...provided.droppableProps}>
               {Object.keys(toDos).map((boardId, index) => (
                 <Board
