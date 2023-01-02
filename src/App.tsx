@@ -160,7 +160,7 @@ function App() {
               {...register("addToDo", {
                 required: true,
               })}
-              placeholder={`New Board add here`}
+              placeholder={`New Board add here :P`}
             />
             <button>ADD</button>
           </form>
