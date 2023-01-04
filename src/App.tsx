@@ -152,6 +152,7 @@ function App() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
+      <h1>Welcome</h1>
       <Wrapper>
         <AddForm>
           <form onSubmit={handleSubmit(onValid)}>
